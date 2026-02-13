@@ -52,21 +52,18 @@ const fadeInUp = {
 };
 
 const galleryItemVariants = {
-  hidden: (index: number) => ({
+  // Simple fade + slide-up, no left/right tilt so it can't
+  // visually interfere with other fixed elements like the mute button.
+  hidden: () => ({
     opacity: 0,
-    y: 40,
-    x: index % 2 === 0 ? -40 : 40,
-    rotate: index % 2 === 0 ? -5 : 5,
+    y: 30,
   }),
-  visible: (index: number) => ({
+  visible: () => ({
     opacity: 1,
     y: 0,
-    x: 0,
-    rotate: 0,
     transition: {
-      duration: 0.7,
+      duration: 0.6,
       ease: easeInOut,
-      delay: index * 0.06,
     },
   }),
 };
@@ -738,14 +735,7 @@ export default function HomePage() {
         onClick={toggleMusic}
         aria-label={isMusicPlaying ? "Mute background music" : "Play background music"}
       >
-        <span
-          className={
-            isMusicPlaying
-              ? "music-toggle-icon"
-              : "music-toggle-icon music-toggle-icon-pulse"
-          }
-          aria-hidden="true"
-        >
+        <span className="music-toggle-icon" aria-hidden="true">
           {isMusicPlaying ? (
             <svg
               viewBox="0 0 24 24"
@@ -850,7 +840,6 @@ function GallerySection() {
               key={item.src}
               className="gallery-item"
               variants={galleryItemVariants}
-              custom={index}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.4 }}
