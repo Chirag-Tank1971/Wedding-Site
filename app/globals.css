@@ -797,6 +797,17 @@ p {
   object-fit: cover;
   display: block;
   transition: transform 0.4s ease;
+  /* Nudge focal point down so faces are more likely to be visible
+     (adjust percentage if you want faces higher/lower). */
+  object-position: center 35%;
+}
+
+/* Slightly different vertical focus on narrow screens to avoid cutting off
+   too much of the subject on small viewports */
+@media (max-width: 640px) {
+  .timeline-event-card-image {
+    object-position: center 40%;
+  }
 }
 
 .timeline-event-card:hover .timeline-event-card-image {
@@ -865,6 +876,20 @@ p {
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.92);
   margin: 0;
+}
+
+/* Structured timeline details (small, dotless lines) */
+.timeline-event-details {
+  list-style: none; /* remove bullets */
+  margin: 6px 0 0;
+  padding: 0; /* remove default left padding */
+}
+
+.timeline-event-detail {
+  font-size: 12px; /* slightly smaller than note */
+  line-height: 1.18; /* tighter line spacing */
+  margin: 4px 0 0; /* reduced gap between lines */
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* GALLERY */

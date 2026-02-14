@@ -19,18 +19,6 @@ const galleryItems = [
     author: "A & P",
   },
   {
-    src: "/gallery/gallery-2.jpg",
-    alt: "Hands held together with mehndi",
-    quote: "Two hearts, one soul, and a lifetime of togetherness.",
-    author: "With love",
-  },
-  {
-    src: "/gallery/gallery-3.jpg",
-    alt: "Traditional wedding details",
-    quote: "Wrapped in traditions, surrounded by love.",
-    author: "Our families",
-  },
-  {
     src: "/gallery/gallery-4.jpg",
     alt: "Joyful dance moment",
     quote: "Here’s to love, laughter and happily ever after.",
@@ -49,14 +37,22 @@ const timelineEvents = [
   {
     time: "9 March 2026",
     title: "Haldi highs & happy vibes",
-    note: "Timings: 11 am · Venue: At our residence · Attire: Hues of yellow",
+    // keep a short summary in note and provide structured details below
+    note: "Haldi ceremony",
+    details: [
+      "Timings: 11 am",
+      "Venue: At our residence (1089, Vivekanand Nagar, Ghaziabad)",
+      "Attire: Hues of yellow",
+    ],
+  // per-event focal point for the image (object-position)
+  focus: "center 75%",
     image: "/timeline/haldi.jpg",
     accent: "#daa520",
   },
   {
     time: "10 March 2026",
     title: "DJ night — Glitz and glam",
-    note: "DJ night 7 pm onwards",
+    note: "7 pm onwards",
     image: "/timeline/dj-night.jpg",
     accent: "#8b4789",
   },
@@ -332,7 +328,7 @@ function ScratchIntroCard({
             }}
           />
           <span className="scratch-save-the-date">Save the date</span>
-          <span className="scratch-date">8–11 March 2026</span>
+          <span className="scratch-date">11 March 2026</span>
         </div>
 
         <motion.div
@@ -531,9 +527,9 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
           >
-            <div className="hero-date">8–11 March 2026 • Ghaziabad</div>
+            <div className="hero-date">11 March 2026 • Ghaziabad</div>
             <div className="hero-names">Aadarsh &amp; Pragya</div>
-            <div className="hero-place">Crystal Hall, Raj Nagar Extension</div>
+            <div className="hero-place"></div>
             <p className="hero-tagline">
               With the blessings of our families, we invite you to join us in
               celebrating four days of love, traditions, music and memories in
@@ -704,6 +700,11 @@ export default function HomePage() {
                 time={event.time}
                 title={event.title}
                 note={event.note}
+                // pass optional details if present
+                // @ts-ignore - events may or may not have details
+                details={event.details}
+                // @ts-ignore - optional per-event focus (object-position)
+                focus={event.focus}
                 image={event.image}
                 accent={event.accent}
               />
@@ -1112,12 +1113,16 @@ function TimelineEventCard({
   note,
   image,
   accent,
+  details,
+  focus,
 }: {
   time: string;
   title: string;
   note: string;
   image: string;
   accent: string;
+  details?: string[];
+  focus?: string;
 }) {
   const [imgSrc, setImgSrc] = useState(image);
   const handleImageError = () => setImgSrc(FALLBACK_TIMELINE_IMAGE);
@@ -1135,6 +1140,7 @@ function TimelineEventCard({
           className="timeline-event-card-image"
           loading="lazy"
           onError={handleImageError}
+          style={focus ? ({ objectPosition: focus } as React.CSSProperties) : undefined}
         />
         <div
           className="timeline-event-card-overlay"
@@ -1144,6 +1150,16 @@ function TimelineEventCard({
           <div className="timeline-event-card-date">{time}</div>
           <h3 className="timeline-event-card-title">{title}</h3>
           <p className="timeline-event-card-note">{note}</p>
+
+          {details && details.length > 0 && (
+            <ul className="timeline-event-details">
+              {details.map((d, i) => (
+                <li key={i} className="timeline-event-detail">
+                  {d}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </motion.div>
