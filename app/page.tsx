@@ -291,6 +291,14 @@ function ScratchIntroCard({
         style={{ width: SCRATCH_WIDTH, height: SCRATCH_HEIGHT, touchAction: "none" }}
       >
         <div className="scratch-reveal" aria-hidden="true">
+          <img
+            src="/ganesh.png"
+            alt=""
+            className="scratch-ganesh-logo"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
           <span className="scratch-save-the-date">Save the date</span>
           <span className="scratch-date">8–11 March 2026</span>
         </div>
