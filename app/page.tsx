@@ -610,20 +610,6 @@ export default function HomePage() {
       <section className="timeline">
         <div className="container">
           <motion.div
-            className="timeline-intro-image"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <img
-              src="/timeline-intro.jpg"
-              alt="A warm moment setting the mood for the celebrations"
-              loading="lazy"
-            />
-          </motion.div>
-
-          <motion.div
             className="section-header"
             initial="hidden"
             whileInView="visible"

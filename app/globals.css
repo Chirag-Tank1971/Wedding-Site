@@ -664,28 +664,21 @@ p {
 }
 
 .timeline {
-  background: linear-gradient(
-    180deg,
-    #faf8f5 0%,
-    #f5f0e8 30%,
-    #fff 100%
-  );
-}
-
-.timeline-intro-image {
-  margin: 0 auto 32px;
-  max-width: 520px;
-  border-radius: 22px;
-  overflow: hidden;
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.18);
-}
-
-.timeline-intro-image img {
-  width: 100%;
-  display: block;
-  max-height: 260px;
-  object-fit: cover;
-  object-position: center 20%;
+  background:
+    radial-gradient(
+      ellipse 100% 60% at 50% 0%,
+      rgba(218, 165, 32, 0.12) 0%,
+      rgba(201, 161, 93, 0.06) 40%,
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      #fef9f3 0%,
+      #fdf5ec 22%,
+      #faf0e6 45%,
+      #f8ebe2 70%,
+      #f5e8e0 100%
+    );
 }
 
 .timeline-grid {
