@@ -1,6 +1,7 @@
  "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, easeInOut, motion } from "framer-motion";
 
 type TimeLeft = {
@@ -345,7 +346,12 @@ export default function HomePage() {
   const [activeLocation, setActiveLocation] = useState<LocationKey>("wedding");
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showRsvpThanks, setShowRsvpThanks] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: "00",
     hours: "00",
@@ -964,58 +970,63 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Music toggle (bottom-right) */}
-      <button
-        type="button"
-        className="music-toggle"
-        onClick={toggleMusic}
-        aria-label={isMusicPlaying ? "Mute background music" : "Play background music"}
-      >
-        <span className="music-toggle-icon" aria-hidden="true">
-          {isMusicPlaying ? (
-            <svg
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 9v6h4l5 4V5L8 9H4z"
-                fill="currentColor"
-              />
-              <path
-                d="M16.5 8.11a4 4 0 0 1 0 7.78"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-              <path
-                d="M18.5 5.5a7 7 0 0 1 0 13"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-          ) : (
-            <svg
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 9v6h4l5 4V5L8 9H4z"
-                fill="currentColor"
-              />
-              <path
-                d="M18 9l-3 3 3 3M21 9l-3 3 3 3"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-          )}
-        </span>
-      </button>
+      {/* Music toggle (bottom-right) — portaled to body so it stays above intro/overlays */}
+      {mounted &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <button
+            type="button"
+            className="music-toggle"
+            onClick={toggleMusic}
+            aria-label={isMusicPlaying ? "Mute background music" : "Play background music"}
+          >
+            <span className="music-toggle-icon" aria-hidden="true">
+              {isMusicPlaying ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 9v6h4l5 4V5L8 9H4z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M16.5 8.11a4 4 0 0 1 0 7.78"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M18.5 5.5a7 7 0 0 1 0 13"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 9v6h4l5 4V5L8 9H4z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M18 9l-3 3 3 3M21 9l-3 3 3 3"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              )}
+            </span>
+          </button>,
+          document.body
+        )}
 
       <footer>
         Hope to see you
