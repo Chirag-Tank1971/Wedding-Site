@@ -110,38 +110,47 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Soft paper background with subtle center fold and more transparency */
+  /* Warmer gradient + center glow + subtle pattern */
   background:
-    linear-gradient(
-      to right,
-      rgba(246, 240, 230, 0.78) 0%,
-      rgba(246, 240, 230, 0.78) 49.5%,
-      rgba(0, 0, 0, 0.06) 50%,
-      rgba(246, 240, 230, 0.78) 50.5%,
-      rgba(246, 240, 230, 0.78) 100%
+    radial-gradient(
+      ellipse 80% 70% at 50% 45%,
+      rgba(255, 250, 240, 0.95) 0%,
+      rgba(254, 245, 232, 0.9) 35%,
+      rgba(252, 238, 222, 0.85) 60%,
+      rgba(248, 235, 218, 0.8) 100%
     ),
     radial-gradient(
-      circle at top,
-      rgba(246, 240, 230, 0.32),
-      rgba(228, 214, 191, 0.22)
+      circle at 50% 40%,
+      rgba(218, 165, 32, 0.08) 0%,
+      rgba(201, 161, 93, 0.04) 40%,
+      transparent 70%
     ),
-    /* subtle paper grain */
+    linear-gradient(
+      165deg,
+      rgba(254, 248, 238, 0.92) 0%,
+      rgba(250, 240, 228, 0.9) 50%,
+      rgba(248, 235, 220, 0.88) 100%
+    ),
     repeating-linear-gradient(
       0deg,
-      rgba(255, 255, 255, 0.08) 0px,
-      rgba(255, 255, 255, 0.08) 1px,
-      transparent 1px,
-      transparent 3px
+      transparent 0px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.04) 2px,
+      rgba(255, 255, 255, 0.04) 3px
     );
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
 
 .mobile-intro-button {
   margin-top: 6px;
   border-radius: 999px;
-  border: 1px solid #d3b26b;
-  padding: 10px 26px;
-  background: transparent;
+  border: 1px solid rgba(201, 161, 93, 0.6);
+  padding: 11px 28px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 252, 248, 0.95) 0%,
+    rgba(248, 240, 224, 0.9) 100%
+  );
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -150,23 +159,89 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background-color 0.25s ease, color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 4px 16px rgba(201, 161, 93, 0.2);
+}
+
+.mobile-intro-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .mobile-intro-button:hover {
-  background: #d3b26b;
+  background: linear-gradient(180deg, #e8d4a8 0%, #d3b26b 100%);
   color: #2d1a0a;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  transform: translateY(-1px) scale(1.02);
+  border-color: #c9a15d;
+  box-shadow: 0 8px 28px rgba(201, 161, 93, 0.4);
+  transform: translateY(-2px) scale(1.02);
 }
 
+.mobile-intro-button:hover::before {
+  opacity: 1;
+  animation: buttonShimmer 1.2s ease-in-out;
+}
+
+@keyframes buttonShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Scratch reveal decorative dots (when names appear) */
+.scratch-reveal-dots {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scratch-reveal-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(201, 161, 93, 0.6);
+  animation: revealDotIn 0.5s ease-out backwards;
+}
+
+.scratch-reveal-dot:nth-child(1) { animation-delay: 0.1s; }
+.scratch-reveal-dot:nth-child(2) { animation-delay: 0.2s; }
+.scratch-reveal-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes revealDotIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
 .mobile-intro-card {
   padding: 32px 22px 28px;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+  background: rgba(255, 252, 248, 0.96);
+  border: 1px solid rgba(201, 161, 93, 0.35);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    0 24px 56px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -233,31 +308,6 @@ p {
   color: #f7e6bf;
 }
 
-.mobile-intro-button {
-  margin-top: 6px;
-  border-radius: 999px;
-  border: 1px solid #d3b26b;
-  padding: 10px 26px;
-  background: transparent;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: #5a4022;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background-color 0.25s ease, color 0.25s ease;
-}
-
-.mobile-intro-button:hover {
-  background: #d3b26b;
-  color: #2d1a0a;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  transform: translateY(-1px) scale(1.02);
-}
-
 /* Scratch intro — heart shape, Save the date + date (no image) */
 .mobile-intro-card--scratch {
   max-width: 320px;
@@ -272,16 +322,21 @@ p {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--muted);
+  color: #6b5344;
   margin-bottom: 14px;
   margin-top: 0;
   order: 1;
+  animation: scratchHintPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes scratchHintPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
 }
 
 .scratch-container {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
@@ -294,6 +349,10 @@ p {
 .scratch-container--heart {
   clip-path: url(#scratch-heart-clip);
   -webkit-clip-path: url(#scratch-heart-clip);
+  box-shadow:
+    0 0 28px rgba(201, 161, 93, 0.22),
+    0 8px 32px rgba(201, 161, 93, 0.2),
+    0 18px 48px rgba(0, 0, 0, 0.18);
 }
 
 .scratch-container:active {
@@ -349,10 +408,12 @@ p {
 
 .scratch-names-wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 12px;
   margin-bottom: 0;
+  position: relative;
 }
 .scratch-names-wrap .scratch-place {
   font-size: 13px;

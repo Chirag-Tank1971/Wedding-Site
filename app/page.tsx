@@ -263,15 +263,22 @@ function ScratchIntroCard({
   return (
     <motion.div
       className="mobile-intro-card mobile-intro-card--scratch"
-      initial={{ scale: 1.05, y: 20, opacity: 0 }}
+      initial={{ scale: 1.05, y: 20, opacity: 0, rotate: -1 }}
       animate={
         isClosing
-          ? { scale: 1.02, y: -20, opacity: 0 }
-          : { scale: 1, y: 0, opacity: 1 }
+          ? { scale: 1.02, y: -20, opacity: 0, rotate: 0 }
+          : { scale: 1, y: 0, opacity: 1, rotate: 0 }
       }
-      transition={{ duration: 0.8, ease: easeInOut }}
+      transition={{ duration: 0.85, ease: [0.22, 0.61, 0.36, 1] }}
     >
-      <p className="scratch-intro-hint">Scratch to reveal</p>
+      <motion.p
+        className="scratch-intro-hint"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: easeInOut, delay: 0.25 }}
+      >
+        Scratch to reveal
+      </motion.p>
       <svg width="0" height="0" aria-hidden="true">
         <defs>
           <clipPath id="scratch-heart-clip" clipPathUnits="objectBoundingBox">
@@ -313,11 +320,22 @@ function ScratchIntroCard({
 
       <motion.div
         className="scratch-names-wrap"
-        initial={{ opacity: 0, y: 6 }}
-        animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-        transition={{ duration: 0.45, ease: "easeOut" }}
+        initial={{ opacity: 0, y: 6, scale: 0.98 }}
+        animate={
+          isRevealed
+            ? { opacity: 1, y: 0, scale: 1 }
+            : { opacity: 0, y: 6, scale: 0.98 }
+        }
+        transition={{ duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
       >
         <div className="scratch-place">Aadarsh &amp; Pragya</div>
+        {isRevealed && (
+          <div className="scratch-reveal-dots" aria-hidden="true">
+            <span className="scratch-reveal-dot" />
+            <span className="scratch-reveal-dot" />
+            <span className="scratch-reveal-dot" />
+          </div>
+        )}
       </motion.div>
 
       <motion.div
