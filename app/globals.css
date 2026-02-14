@@ -351,6 +351,32 @@ p {
   color: #6b4423;
 }
 
+/* Canvas scratch overlay (replaces static overlay when scratch-to-reveal is used) */
+.scratch-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: block;
+}
+
+.scratch-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: grab;
+}
+
+.scratch-canvas-wrap:active .scratch-canvas {
+  cursor: grabbing;
+}
+
 .scratch-overlay {
   /* keep overlay positioned but size heart via inner background element */
   position: absolute;

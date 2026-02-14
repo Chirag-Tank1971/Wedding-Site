@@ -62,6 +62,9 @@ const galleryItemVariants = {
 
 const SCRATCH_WIDTH = 340;
 const SCRATCH_HEIGHT = 380;
+const SCRATCH_THRESHOLD = 0.6; // 60% scratched = auto complete
+const SCRATCH_BRUSH_SIZE = 32;
+const THRESHOLD_CHECK_INTERVAL_MS = 280;
 
 function ScratchIntroCard({
   onComplete,
@@ -71,14 +74,159 @@ function ScratchIntroCard({
   isClosing: boolean;
 }) {
   const [isRevealed, setIsRevealed] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+  const completedRef = useRef(false);
+  const thresholdCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleReveal = () => {
+    if (completedRef.current) return;
+    completedRef.current = true;
     setIsRevealed(true);
-    // Wait 2 seconds to show the revealed content, then proceed to main page
+    if (thresholdCheckRef.current) {
+      clearTimeout(thresholdCheckRef.current);
+      thresholdCheckRef.current = null;
+    }
     setTimeout(() => {
       onComplete();
     }, 2000);
   };
+
+  // Draw gold + glitter base layer once
+  const drawBase = useRef(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.round(SCRATCH_WIDTH * dpr);
+    const h = Math.round(SCRATCH_HEIGHT * dpr);
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    // Gold fill
+    ctx.fillStyle = "#c9a15d";
+    ctx.fillRect(0, 0, w, h);
+    // Glitter: light dots overlay
+    ctx.globalAlpha = 0.35;
+    ctx.fillStyle = "#fff";
+    const step = 12;
+    for (let y = 0; y < h; y += step) {
+      for (let x = 0; x < w; x += step) {
+        const jitter = (x + y) % 3;
+        ctx.beginPath();
+        ctx.arc(x + (jitter - 1) * 2, y + (jitter % 2) * 2, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  });
+
+  const getScratchedRatio = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || canvas.width === 0 || canvas.height === 0) return 0;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return 0;
+    try {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      let transparent = 0;
+      const total = (data.length / 4) | 0;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] < 128) transparent++;
+      }
+      return total > 0 ? transparent / total : 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  const scheduleThresholdCheck = () => {
+    if (thresholdCheckRef.current) return;
+    thresholdCheckRef.current = setTimeout(() => {
+      thresholdCheckRef.current = null;
+      if (completedRef.current) return;
+      if (getScratchedRatio() >= SCRATCH_THRESHOLD) {
+        handleReveal();
+      }
+    }, THRESHOLD_CHECK_INTERVAL_MS);
+  };
+
+  const getCanvasPoint = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
+  };
+
+  const drawStroke = (from: { x: number; y: number }, to: { x: number; y: number }) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const brush = SCRATCH_BRUSH_SIZE * dpr;
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.strokeStyle = "rgba(0,0,0,0.8)";
+    ctx.lineWidth = brush;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.shadowBlur = brush * 0.4;
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (isRevealed || completedRef.current) return;
+    e.preventDefault();
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    const point = getCanvasPoint(e.clientX, e.clientY);
+    if (!point) return;
+    isDrawingRef.current = true;
+    lastPosRef.current = point;
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!isDrawingRef.current || !lastPosRef.current || isRevealed) return;
+    e.preventDefault();
+    const point = getCanvasPoint(e.clientX, e.clientY);
+    if (!point) return;
+    drawStroke(lastPosRef.current, point);
+    lastPosRef.current = point;
+    scheduleThresholdCheck();
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    isDrawingRef.current = false;
+    lastPosRef.current = null;
+    scheduleThresholdCheck();
+  };
+
+  const onPointerLeave = () => {
+    isDrawingRef.current = false;
+    lastPosRef.current = null;
+    scheduleThresholdCheck();
+  };
+
+  useEffect(() => {
+    drawBase.current();
+  }, []);
 
   return (
     <motion.div
@@ -91,7 +239,7 @@ function ScratchIntroCard({
       }
       transition={{ duration: 0.8, ease: easeInOut }}
     >
-      <p className="scratch-intro-hint">Tap to reveal</p>
+      <p className="scratch-intro-hint">Scratch to reveal</p>
       <svg width="0" height="0" aria-hidden="true">
         <defs>
           <clipPath id="scratch-heart-clip" clipPathUnits="objectBoundingBox">
@@ -107,22 +255,30 @@ function ScratchIntroCard({
           <span className="scratch-save-the-date">Save the date</span>
           <span className="scratch-date">8–11 March 2026</span>
         </div>
-        
-        {/* Animated scratch overlay layer */}
+
         <motion.div
-          className="scratch-overlay"
-          initial={{ opacity: 1, scale: 1 }}
-          animate={isRevealed ? { opacity: 0, scale: 1.1 } : { opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="scratch-canvas-wrap"
+          initial={{ opacity: 1 }}
+          animate={isRevealed ? { opacity: 0 } : { opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           style={{ pointerEvents: isRevealed ? "none" : "auto" }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerLeave={onPointerLeave}
+          onPointerCancel={onPointerUp}
         >
-          <div className="scratch-layer-background" />
+          <canvas
+            ref={canvasRef}
+            className="scratch-canvas"
+            width={SCRATCH_WIDTH}
+            height={SCRATCH_HEIGHT}
+            style={{ width: SCRATCH_WIDTH, height: SCRATCH_HEIGHT }}
+            aria-hidden
+          />
         </motion.div>
-  {/* Glitter layer sits above the overlay and will fade with it */}
-  <div className="scratch-glitter" aria-hidden="true" style={{ pointerEvents: isRevealed ? 'none' : 'auto' }} />
       </div>
 
-      {/* Names below the heart - appear after reveal */}
       <motion.div
         className="scratch-names-wrap"
         initial={{ opacity: 0, y: 6 }}
@@ -132,16 +288,15 @@ function ScratchIntroCard({
         <div className="scratch-place">Aadarsh &amp; Pragya</div>
       </motion.div>
 
-      {/* Tap to Reveal Button */}
       <motion.div
         className="scratch-cta-wrap"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: easeInOut, delay: 0.3 }}
       >
-        <button 
-          type="button" 
-          className="mobile-intro-button" 
+        <button
+          type="button"
+          className="mobile-intro-button"
           onClick={handleReveal}
           disabled={isRevealed}
         >
