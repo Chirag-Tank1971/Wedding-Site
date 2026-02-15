@@ -38,7 +38,6 @@ const timelineEvents = [
     time: "9 March 2026",
     title: "Haldi highs & happy vibes",
     // keep a short summary in note and provide structured details below
-    note: "Haldi ceremony",
     details: [
       "Timings: 11 am",
       "Venue: At our residence (1089, Vivekanand Nagar, Ghaziabad)",
@@ -52,8 +51,11 @@ const timelineEvents = [
   {
     time: "10 March 2026",
     title: "DJ night — Glitz and glam",
-    note: "7 pm onwards",
-    image: "/timeline/dj-night.jpg",
+    details: [
+      "Timings: 7 pm onwards",
+      "Venue: At our residence (1089, Vivekanand Nagar, Ghaziabad)",
+      "Attire: Anything glittery and blingy  ",
+    ],    image: "/timeline/dj-night.jpg",
     accent: "#8b4789",
   },
   {
@@ -769,7 +771,7 @@ export default function HomePage() {
                   }
                   onClick={() => setActiveLocation("residence")}
                 >
-                  Residence (जनेऊ / Haldi)
+                  Residence (जनेऊ / Haldi /DJ Night)
                 </button>
               </div>
 
@@ -807,7 +809,7 @@ export default function HomePage() {
                     1089, Vivekanand Nagar, Ghaziabad
                   </div>
                   <p className="location-note">
-                    जनेऊ and Haldi ceremonies will be held here as mentioned in
+                    जनेऊ, Haldi, and DJ Night ceremonies will be held here as mentioned in
                     the schedule.
                   </p>
                   <a
