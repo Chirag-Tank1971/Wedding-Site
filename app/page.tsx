@@ -771,7 +771,7 @@ export default function HomePage() {
                   }
                   onClick={() => setActiveLocation("residence")}
                 >
-                  Residence (जनेऊ / Haldi /DJ Night)
+                  Residence (जनेऊ / Haldi / DJ Night)
                 </button>
               </div>
 
@@ -1120,7 +1120,7 @@ function TimelineEventCard({
 }: {
   time: string;
   title: string;
-  note: string;
+  note?: string;
   image: string;
   accent: string;
   details?: string[];
@@ -1151,7 +1151,7 @@ function TimelineEventCard({
         <div className="timeline-event-card-content">
           <div className="timeline-event-card-date">{time}</div>
           <h3 className="timeline-event-card-title">{title}</h3>
-          <p className="timeline-event-card-note">{note}</p>
+          {note && <p className="timeline-event-card-note">{note}</p>}
 
           {details && details.length > 0 && (
             <ul className="timeline-event-details">
