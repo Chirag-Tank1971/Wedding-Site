@@ -53,7 +53,8 @@ const timelineEvents = [
       "Timings: Evening",
       "Venue: Maribella Hotel & Resort, Amritsar",
     ],
-    focus: "center 75%",
+    // Adjust focal point so the couple's hands and faces are nicely visible on desktop
+    focus: "center 20%",
     image: "/timeline/haldi.jpg",
     accent: "#daa520",
   },
