@@ -16,19 +16,28 @@ const galleryItems = [
   {
     src: "/gallery/gallery-1.jpg",
     alt: "Warm candid moment of the couple",
-    quote: "Every love story is beautiful, but ours is our favorite."},
+    quote: "Every love story is beautiful, but ours is our favorite.",
+    // Adjust crop so subjects stay centered across screen sizes
+    focus: "center 25%",
+  },
   {
     src: "/gallery/gallery-2.jpg",
     alt: "Soft portrait in a garden",
-    quote: "Small moments, big memories."},
+    quote: "Small moments, big memories.",
+    focus: "center 30%",
+  },
   {
     src: "/gallery/gallery-3.jpg",
     alt: "Laughing together on a walk",
-    quote: "Together is a wonderful place to be."},
+    quote: "Together is a wonderful place to be.",
+    focus: "center 30%",
+  },
   {
     src: "/gallery/gallery-4.jpg",
     alt: "Joyful dance moment",
-    quote: "Here’s to love, laughter and happily ever after."},
+    quote: "Here’s to love, laughter and happily ever after.",
+    focus: "center 25%",
+  },
 ] as const;
 
 const timelineEvents = [
@@ -39,6 +48,7 @@ const timelineEvents = [
     details: [
       "Venue: Taj Swarna, Trinity 1, Amritsar",
     ],
+    focus: "center 15%",
     image: "/timeline/janeu.jpg",
     accent: "#b8860b",
   },
@@ -50,7 +60,7 @@ const timelineEvents = [
       "Venue: Maribella Hotel & Resort, Amritsar",
     ],
     // Adjust focal point so the couple's hands and faces are nicely visible on desktop
-    focus: "center 35%",
+    focus: "center 25%",
     image: "/timeline/haldi.jpg",
     accent: "#daa520",
   },
@@ -71,6 +81,7 @@ const timelineEvents = [
     details:[
       "Sehra bandi at Taj Swarna, followed by the reception of baraat and wedding celebrations at Festyn Palais, Amritsar",
     ],
+    focus: "center 30%",
     image: "/timeline/wedding.jpg",
     accent: "#c9a15d",
   },
@@ -1208,6 +1219,10 @@ function GallerySection() {
                   alt={item.alt}
                   className="gallery-image"
                   loading="lazy"
+                  style={
+                    // @ts-ignore - items may optionally define a focus point
+                    item.focus ? ({ objectPosition: item.focus } as React.CSSProperties) : undefined
+                  }
                 />
                 <div className="gallery-overlay">
                   <p className="gallery-quote">“{item.quote}”</p>

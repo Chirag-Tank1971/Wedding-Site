@@ -923,6 +923,8 @@ p {
   width: 100%;
   height: 260px;
   object-fit: cover;
+  /* Default crop (override per-image via inline object-position) */
+  object-position: center 30%;
   display: block;
   transform-origin: center;
   transition: transform 0.7s ease, filter 0.7s ease;
