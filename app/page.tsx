@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, easeInOut, motion } from "framer-motion";
+import { details } from "framer-motion/client";
 
 type TimeLeft = {
   days: string;
@@ -15,56 +16,50 @@ const galleryItems = [
   {
     src: "/gallery/gallery-1.jpg",
     alt: "Warm candid moment of the couple",
-    quote: "Every love story is beautiful, but ours is our favorite.",
-    author: "Udhay & Meenal",
-  },
+    quote: "Every love story is beautiful, but ours is our favorite."},
   {
     src: "/gallery/gallery-2.jpg",
     alt: "Soft portrait in a garden",
-    quote: "Small moments, big memories.",
-    author: "Udhay & Meenal",
-  },
+    quote: "Small moments, big memories."},
   {
     src: "/gallery/gallery-3.jpg",
     alt: "Laughing together on a walk",
-    quote: "Together is a wonderful place to be.",
-    author: "Friends & Family",
-  },
+    quote: "Together is a wonderful place to be."},
   {
     src: "/gallery/gallery-4.jpg",
     alt: "Joyful dance moment",
-    quote: "Here’s to love, laughter and happily ever after.",
-    author: "Forever",
-  },
+    quote: "Here’s to love, laughter and happily ever after."},
 ] as const;
 
 const timelineEvents = [
   {
     time: "18 April 2026",
     title: "Welcome lunch",
-    note: "A warm welcome over lunch · Venue: Taj Swarna, Trinity 1, Amritsar",
+    note: "A warm welcome over lunch",
+    details: [
+      "Venue: Taj Swarna, Trinity 1, Amritsar",
+    ],
     image: "/timeline/janeu.jpg",
     accent: "#b8860b",
   },
   {
     time: "18 April 2026",
     title: "Sagan ceremony",
+    note: "The beginning of forever.",
     details: [
-      "Timings: Evening",
       "Venue: Maribella Hotel & Resort, Amritsar",
     ],
     // Adjust focal point so the couple's hands and faces are nicely visible on desktop
-    focus: "center 20%",
+    focus: "center 35%",
     image: "/timeline/haldi.jpg",
     accent: "#daa520",
   },
   {
     time: "19 April 2026",
     title: "Haldi ceremony",
+    note: "Sacred golden touch with love.",
     details: [
-      "Timings: Morning",
       "Venue: Taj Swarna, Amritsar",
-      "Attire: Hues of yellow",
     ],
     image: "/timeline/dj-night.jpg",
     accent: "#8b4789",
@@ -72,13 +67,16 @@ const timelineEvents = [
   {
     time: "19 April 2026",
     title: "Sehra bandi & reception of baraat",
-    note: "Sehra bandi at Taj Swarna, followed by the reception of baraat and wedding celebrations at Festyn Palais, Amritsar",
+    note: "Tying the knot to be forever.",
+    details:[
+      "Sehra bandi at Taj Swarna, followed by the reception of baraat and wedding celebrations at Festyn Palais, Amritsar",
+    ],
     image: "/timeline/wedding.jpg",
     accent: "#c9a15d",
   },
 ];
 
-type LocationKey = "wedding" | "residence";
+type LocationKey = "wedding" | "residence" | "sagan";
 
 // Countdown to the main wedding day (19 April 2026, Amritsar)
 const targetDate = new Date("2026-04-19T00:00:00+05:30");
@@ -583,7 +581,7 @@ export default function HomePage() {
             custom={1}
           >
             With joyful hearts, we invite you to join us as we celebrate our
-            love and commitment to one another on our special days in Amritsar.
+            love and commitment to one another on our special day.
             Your presence means the world to us, and we cannot wait to share
             these unforgettable moments with you.
           </motion.p>
@@ -733,23 +731,7 @@ export default function HomePage() {
       <section>
         <div className="container">
           <div className="two-column">
-            <motion.div
-              className="card"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={fadeInUp}
-              custom={0}
-            >
-              <div className="tag">Dress code</div>
-              <h3>Celebratory Indian attire</h3>
-              <p>
-                Join us in vibrant, traditional Indian outfits across our celebrations.
-                For the Haldi ceremony, we warmly invite you to wear beautiful{" "}
-                <strong>hues of yellow</strong>.
-              </p>
-            </motion.div>
-
+         
             <motion.div
               className="card"
               initial="hidden"
@@ -782,7 +764,18 @@ export default function HomePage() {
                   }
                   onClick={() => setActiveLocation("residence")}
                 >
-                  Stay & pre-wedding functions
+                  Stay & pre-wedding
+                </button>
+                <button
+                  type="button"
+                  className={
+                    activeLocation === "sagan"
+                      ? "map-toggle-btn map-toggle-btn-active"
+                      : "map-toggle-btn"
+                  }
+                  onClick={() => setActiveLocation("sagan")}
+                >
+                  Sagan ceremony
                 </button>
               </div>
 
@@ -802,7 +795,34 @@ export default function HomePage() {
                   </a>
                   <div className="map-wrapper">
                     <iframe
-                      src="https://www.google.com/maps?q=Crystal+Hall+The+Continental+by+Red+Carpet+Raj+Nagar+Extension+Ghaziabad&output=embed"
+                      src="https://www.google.com/maps?q=Festyn+Palais+Amritsar&output=embed"
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      style={{ width: "100%", height: "320px", border: 0 }}
+                    />
+                  </div>
+                </>
+              ) : activeLocation === "sagan" ? (
+                <>
+                  <div className="location-name">Maribella Hotel &amp; Resort</div>
+                  <div className="location-address">
+                    Amritsar
+                  </div>
+                  <p className="location-note">
+                    Sagan ceremony will be held here as mentioned in the schedule.
+                  </p>
+                  <a
+                    className="muted-link"
+                    href="https://maps.google.com/?q=Maribella+Hotel+Resort+Amritsar"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in Google Maps
+                  </a>
+                  <div className="map-wrapper">
+                    <iframe
+                      src="https://www.google.com/maps?q=Maribella+Hotel+Resort+Amritsar&output=embed"
                       loading="lazy"
                       allowFullScreen
                       referrerPolicy="no-referrer-when-downgrade"
@@ -832,7 +852,7 @@ export default function HomePage() {
                   </a>
                   <div className="map-wrapper">
                     <iframe
-                      src="https://www.google.com/maps?q=1089,+Vivekanand+Nagar,+Ghaziabad&output=embed"
+                      src="https://www.google.com/maps?q=Taj+Swarna+Amritsar&output=embed"
                       loading="lazy"
                       allowFullScreen
                       referrerPolicy="no-referrer-when-downgrade"
@@ -888,11 +908,8 @@ export default function HomePage() {
                 // Collect form data
                 const formData = new FormData(form);
                 const name = formData.get("name") as string;
-                const attending = formData.get("attending") as string;
+                const members = formData.get("members") as string;
                 const wishes = formData.get("wishes") as string;
-                
-                // Collect events checkboxes
-                const events = Array.from(formData.getAll("events")) as string[];
                 
                 // Collect fun checkboxes
                 const fun = Array.from(formData.getAll("fun")) as string[];
@@ -904,8 +921,7 @@ export default function HomePage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       name,
-                      attending,
-                      events,
+                      members,
                       fun,
                       wishes: wishes || undefined,
                     }),
@@ -930,36 +946,16 @@ export default function HomePage() {
               </div>
 
               <div>
-                <label htmlFor="attending">Will you come? *</label>
-                <select id="attending" name="attending" required>
-                  <option value="">Select an option</option>
-                  <option value="yes">Yes, I will</option>
-                  <option value="no">Unfortunately, I can not :(</option>
-                  <option value="later">I will tell you a bit later</option>
-                </select>
-              </div>
-
-
-              <div>
-                <label>Which events are you most likely to attend?</label>
-                <div className="checkbox-list">
-                  <label className="checkbox-pill">
-                    <input type="checkbox" name="events" value="welcome-lunch" />
-                    Welcome lunch
-                  </label>
-                  <label className="checkbox-pill">
-                    <input type="checkbox" name="events" value="haldi" />
-                    Haldi
-                  </label>
-                  <label className="checkbox-pill">
-                    <input type="checkbox" name="events" value="sagan" />
-                    Sagan ceremony
-                  </label>
-                  <label className="checkbox-pill">
-                    <input type="checkbox" name="events" value="wedding" />
-                    Reception of baraat &amp; wedding
-                  </label>
-                </div>
+                <label htmlFor="members">How many members will be there? *</label>
+                <input
+                  id="members"
+                  name="members"
+                  type="number"
+                  min="1"
+                  max="50"
+                  placeholder="e.g. 2"
+                  required
+                />
               </div>
 
               <div>
@@ -995,9 +991,9 @@ export default function HomePage() {
                 Submit RSVP
               </button>
               <div className="small-note">
-                Prefer confirming over a call? RSVP with{" "}
-                <strong>Mr. Sidarth Aggarwal</strong> (97177 74567) or{" "}
-                <strong>Mrs. Shweta Aggarwal</strong> (+91 70489 82783).
+                Prefer confirming over a call? <br /> RSVP with{" "}
+                <strong>Mr. Sidarth Aggarwal</strong> (+91 90860 00436) or{" "}
+                <strong>Mrs. Shweta Aggarwal</strong> (+91 90860 00437).
               </div>
             </form>
           </motion.div>
@@ -1100,11 +1096,9 @@ export default function HomePage() {
         )}
 
       <footer>
-        Hope to see you
-        <br />
-        With love — Udhay &amp; Meenal
-        <br />
-        Card from Dadi — Smt. Asha Aggarwal
+      Looking forward to seeing you
+      <br />
+      Smt. Asha Aggarwal
       </footer>
     </div>
   );
@@ -1217,7 +1211,6 @@ function GallerySection() {
                 />
                 <div className="gallery-overlay">
                   <p className="gallery-quote">“{item.quote}”</p>
-                  <p className="gallery-quote-author">— {item.author}</p>
                 </div>
               </div>
             </motion.figure>

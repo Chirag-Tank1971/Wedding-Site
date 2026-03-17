@@ -8,27 +8,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       name,
-      attending,
-      events,
+      members,
       fun,
       wishes,
     } = body;
 
     // Validate required fields
-    if (!name || !attending) {
+    if (!name || !members) {
       return NextResponse.json(
-        { error: "Missing required fields: name and attending status" },
+        { error: "Missing required fields: name and number of members" },
         { status: 400 }
       );
     }
 
     // Get email from environment
     const recipientEmail = process.env.RSVP_EMAIL_ADDRESS || "udhay.meenal.wedding@gmail.com";
-
-    // Format the events array
-    const eventsText = Array.isArray(events) && events.length > 0 
-      ? events.join(", ") 
-      : "None selected";
 
     // Format the fun array
     const funText = Array.isArray(fun) && fun.length > 0 
@@ -39,7 +33,7 @@ export async function POST(request: NextRequest) {
     await resend.emails.send({
       from: "Wedding RSVP <onboarding@resend.dev>",
       to: recipientEmail,
-      subject: `New RSVP: ${name} - ${attending}`,
+      subject: `New RSVP: ${name} - ${members} member(s)`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -65,12 +59,8 @@ export async function POST(request: NextRequest) {
                   <div class="value">${escapeHtml(name)}</div>
                 </div>
                 <div class="field">
-                  <div class="label">Will attend:</div>
-                  <div class="value">${escapeHtml(attending)}</div>
-                </div>
-                <div class="field">
-                  <div class="label">Events interested in:</div>
-                  <div class="value">${escapeHtml(eventsText)}</div>
+                  <div class="label">Number of members attending:</div>
+                  <div class="value">${escapeHtml(members)}</div>
                 </div>
                 <div class="field">
                   <div class="label">Most excited about:</div>
@@ -122,12 +112,8 @@ export async function POST(request: NextRequest) {
                 
                 <div class="details">
                   <div class="detail-row">
-                    <div class="detail-label">Attendance Status</div>
-                    <div class="detail-value">${escapeHtml(attending)}</div>
-                  </div>
-                  <div class="detail-row">
-                    <div class="detail-label">Events You Plan to Attend</div>
-                    <div class="detail-value">${eventsText}</div>
+                    <div class="detail-label">Number of Members Attending</div>
+                    <div class="detail-value">${escapeHtml(members)}</div>
                   </div>
                   <div class="detail-row">
                     <div class="detail-label">Most Excited About</div>
