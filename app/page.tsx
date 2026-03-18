@@ -18,19 +18,19 @@ const galleryItems = [
     alt: "Warm candid moment of the couple",
     quote: "Every love story is beautiful, but ours is our favorite.",
     // Adjust crop so subjects stay centered across screen sizes
-    focus: "center 25%",
+    focus: "center 55%",
   },
   {
     src: "/gallery/gallery-2.jpg",
     alt: "Soft portrait in a garden",
     quote: "Small moments, big memories.",
-    focus: "center 30%",
+    focus: "center 85%",
   },
   {
     src: "/gallery/gallery-3.jpg",
     alt: "Laughing together on a walk",
     quote: "Together is a wonderful place to be.",
-    focus: "center 30%",
+    focus: "center 85%",
   },
   {
     src: "/gallery/gallery-4.jpg",
